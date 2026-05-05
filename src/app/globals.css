@@ -1,0 +1,172 @@
+/*
+ * Design tokens.
+ *
+ * The values below are placeholders sourced from a generic Pencil
+ * "Convo_Search" Light theme. On first run of any clone of this
+ * template, ask Claude (or any agent with the Pencil MCP) to:
+ *
+ *   1. Read the project's .pen file via `mcp__pencil__get_variables`.
+ *   2. Replace the values in :root below with the file's Light theme.
+ *   3. Add the corresponding values under `.dark` when dark mode lands.
+ *
+ * Variable NAMES (left side) match what shadcn/ui expects — do not
+ * rename them. Only the values change per project.
+ *
+ * The `lms-*` block holds Thought Industries brand tokens; remove it
+ * if your prototype isn't TI-branded.
+ */
+
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 0.5rem;
+
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  --primary: #1447e6;
+  --primary-foreground: #eff6ff;
+
+  --secondary: #f4f4f5;
+  --secondary-foreground: #18181b;
+
+  --muted: #f5f5f5;
+  --muted-foreground: #737373;
+
+  --accent: #f5f5f5;
+  --accent-foreground: #171717;
+
+  --destructive: #df2225;
+  --destructive-foreground: #ffffff;
+
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: #a1a1a1;
+
+  --chart-1: #8ec5ff;
+  --chart-2: #2b7fff;
+  --chart-3: #155dfc;
+  --chart-4: #1447e6;
+  --chart-5: #193cb8;
+
+  --sidebar: #fafafa;
+  --sidebar-foreground: #0a0a0a;
+  --sidebar-primary: #155dfc;
+  --sidebar-primary-foreground: #eff6ff;
+  --sidebar-accent: #f5f5f5;
+  --sidebar-accent-foreground: #171717;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: #a1a1a1;
+
+  /* Brand (Thought Industries LMS). Remove block if not applicable. */
+  --lms-brand-primary: #0075b4;
+  --lms-brand-secondary: #f9ec31;
+  --lms-brand-accent: #ea2b7b;
+  --lms-brand-muted: #243746;
+  --lms-accessibility-focus: #2ed0e1;
+  --lms-background: #f8fafc;
+  --lms-foreground: #314158;
+  --lms-card: #ffffff;
+  --lms-popover: #ffffff;
+  --lms-border: #e2e8f0;
+  --lms-input: #cad5e2;
+  --lms-muted: #f1f5f9;
+  --lms-muted-foreground: #62748e;
+  --lms-accent: #f1f5f9;
+  --lms-accent-foreground: #314158;
+  --lms-primary: #2864f6;
+  --lms-primary-foreground: #ffffff;
+  --lms-secondary: #f1f5f9;
+  --lms-secondary-foreground: #314158;
+  --lms-destructive: #ef4444;
+  --lms-destructive-foreground: #ffffff;
+  --lms-ring: #2864f6;
+}
+
+.dark {
+  /* Populate from .pen Dark theme when dark mode lands. */
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-lms-brand-primary: var(--lms-brand-primary);
+  --color-lms-brand-secondary: var(--lms-brand-secondary);
+  --color-lms-brand-accent: var(--lms-brand-accent);
+  --color-lms-brand-muted: var(--lms-brand-muted);
+}
+
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  * {
+    border-color: var(--border);
+  }
+
+  .font-primary {
+    font-family: var(--font-inter), "Inter", system-ui, sans-serif;
+  }
+}
