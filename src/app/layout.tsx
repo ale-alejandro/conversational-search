@@ -25,6 +25,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={cn(
         "h-full",
         "antialiased",
@@ -35,6 +36,11 @@ export default function RootLayout({
     >
       <body className="font-primary min-h-full flex flex-col">
         <TooltipProvider>{children}</TooltipProvider>
+        <script
+          src="https://www.inflight.co/widget.js"
+          data-workspace="t68btnyu"
+          async
+        />
       </body>
     </html>
   );
