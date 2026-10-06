@@ -1,9 +1,3 @@
-export type TriggerPosition =
-  | "bottom-right"
-  | "bottom-left"
-  | "top-right"
-  | "top-left";
-
 export type GradientMode = "linear" | "mesh";
 
 export interface MeshPoint {
@@ -23,24 +17,30 @@ export interface AppearanceState {
   gradientAngle: number;
   gradientMode: GradientMode;
   meshPoints: MeshPoint[];
-  iconImage: string | null;
+  /** Masked and tinted with iconColor: the robot until someone uploads their own. */
+  iconImage: string;
   /**
    * Either a hex color, or the literal "auto" — in which case the icon
    * color is derived from the average luminance of `bgColors` so it always
    * contrasts with the trigger background.
    */
   iconColor: string | "auto";
-  position: TriggerPosition;
 }
 
+// The default icon, inlined so it resolves under any base path.
+const ROBOT_ICON = `data:image/svg+xml;base64,${btoa(
+  '<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M16 4C9.37258 4 4 9.37258 4 16V36C4 40.4183 7.58172 44 12 44H36C40.4183 44 44 40.4183 44 36V16C44 9.37258 38.6274 4 32 4H16ZM35 26C37.2091 26 39 24.2091 39 22C39 19.7909 37.2091 18 35 18C32.7909 18 31 19.7909 31 22C31 24.2091 32.7909 26 35 26ZM17 22C17 24.2091 15.2091 26 13 26C10.7909 26 9 24.2091 9 22C9 19.7909 10.7909 18 13 18C15.2091 18 17 19.7909 17 22ZM20 33H28V32H20V33Z" fill="white"/></svg>',
+)}`;
+
+export const DEFAULT_MESH_COLORS = ["#7c0eff", "#0e4dff", "#0efbff", "#f0ffff"];
+
 export const DEFAULT_APPEARANCE: AppearanceState = {
-  bgColors: ["#262626"],
+  bgColors: DEFAULT_MESH_COLORS,
   gradientAngle: 135,
-  gradientMode: "linear",
+  gradientMode: "mesh",
   meshPoints: DEFAULT_MESH_POINTS,
-  iconImage: null,
+  iconImage: ROBOT_ICON,
   iconColor: "auto",
-  position: "bottom-right",
 };
 
 function meshColorAt(colors: string[], index: number) {

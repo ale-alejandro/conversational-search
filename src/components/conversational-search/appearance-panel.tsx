@@ -2,20 +2,15 @@
 
 import { useCallback, useState } from "react";
 import {
-  ArrowDownLeft,
-  ArrowDownRight,
   Lock,
   Minus,
   Plus,
-  Sparkles,
   Unlock,
 } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { RadioGroupCards } from "@/components/ui/radio-group";
-import { Button } from "@/components/ui/button";
 import ColorPicker from "@/components/ui/color-picker";
 import { cn } from "@/lib/utils";
 import {
+  DEFAULT_MESH_COLORS,
   DEFAULT_MESH_POINTS,
   toBackgroundCss,
   resolveIconColor,
@@ -25,12 +20,9 @@ import type {
   AppearanceState,
   GradientMode,
   MeshPoint,
-  TriggerPosition,
 } from "./types";
 
 const HEX_REGEX = /^#([0-9a-fA-F]{6})$/;
-
-const DEFAULT_MESH_COLORS = ["#7c0eff", "#0e4dff", "#0efbff", "#f0ffff"];
 
 function clampGradientAngle(value: number) {
   if (!Number.isFinite(value)) return DEFAULT_APPEARANCE.gradientAngle;
@@ -42,27 +34,14 @@ function clampPercent(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
-const positionItems: {
-  value: TriggerPosition;
-  label: string;
-  icon: React.ComponentType<{ className?: string }>;
-}[] = [
-  { value: "bottom-right", label: "Bottom-right", icon: ArrowDownRight },
-  { value: "bottom-left", label: "Bottom-left", icon: ArrowDownLeft },
-];
-
 interface AppearancePanelProps {
   state: AppearanceState;
   setState: React.Dispatch<React.SetStateAction<AppearanceState>>;
-  onReset: () => void;
-  pickerKey: number;
 }
 
 export function AppearancePanel({
   state,
   setState,
-  onReset,
-  pickerKey,
 }: AppearancePanelProps) {
   const [locked, setLocked] = useState(true);
 
@@ -121,234 +100,133 @@ export function AppearancePanel({
     });
   };
 
-  const isDirty =
-    state.bgColors.length !== DEFAULT_APPEARANCE.bgColors.length ||
-    state.bgColors.some(
-      (c, i) =>
-        c.toLowerCase() !== DEFAULT_APPEARANCE.bgColors[i]?.toLowerCase(),
-    ) ||
-    state.gradientAngle !== DEFAULT_APPEARANCE.gradientAngle ||
-    state.gradientMode !== DEFAULT_APPEARANCE.gradientMode ||
-    state.meshPoints.length !== DEFAULT_APPEARANCE.meshPoints.length ||
-    state.meshPoints.some((p, i) => {
-      const defaultPoint = DEFAULT_APPEARANCE.meshPoints[i];
-      return !defaultPoint || p.x !== defaultPoint.x || p.y !== defaultPoint.y;
-    }) ||
-    state.iconImage !== DEFAULT_APPEARANCE.iconImage ||
-    state.iconColor !== DEFAULT_APPEARANCE.iconColor ||
-    state.position !== DEFAULT_APPEARANCE.position;
-
   return (
-    <aside className="bg-white border-l border-[#e2e8f0] shadow-[0_10px_7.5px_-3px_rgba(0,0,0,0.1),0_4px_3px_-2px_rgba(0,0,0,0.1)] w-[480px] shrink-0 flex flex-col">
-      <Tabs defaultValue="appearance" className="flex flex-col flex-1 min-h-0">
-        <TabsList
-          variant="line"
-          className="border-b border-[#d4d4d4] rounded-none w-full justify-start pt-2.5 px-2 h-auto"
-        >
-          <TabsTrigger value="appearance" className="pb-4 px-1">
-            Appearance
-          </TabsTrigger>
-          <TabsTrigger value="integration" className="pb-4 px-1">
-            Search Bar Integration
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent
-          value="appearance"
-          className="flex flex-col flex-1 min-h-0 overflow-y-auto"
-        >
-          <div className="px-6 py-4">
-            <p className="text-sm text-muted-foreground">
-              Customize the floating search trigger button that appears on your
-              learner-facing site.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-5 px-4 flex-1">
-            {/* Background Color */}
-            <section className="grid grid-cols-[280px_minmax(0,1fr)] gap-x-4 gap-y-2">
-              <label className="text-sm font-medium text-[#314158]">
-                Background Color
-              </label>
-              <label className="text-sm font-medium text-[#314158]">
-                Modify Icon
-              </label>
-              <div className="contents">
-                <div
-                  className="relative rounded-xl bg-slate-100 p-3 flex flex-col items-center justify-center"
-                >
-                  {state.gradientMode === "mesh" ? (
-                    <MeshGradientEditor
-                      colors={state.bgColors}
-                      points={state.meshPoints}
-                      onChange={(meshPoints) =>
-                        setState((s) => ({ ...s, meshPoints }))
-                      }
-                    />
-                  ) : (
-                    <>
-                      <ColorPicker
-                        key={pickerKey}
-                        size={240}
-                        bulletRadius={16}
-                        numPoints={numPoints}
-                        locked={locked}
-                        value={state.bgColors[0]}
-                        onColorChange={handlePickerChange}
-                      />
-                      <div className="flex items-center justify-center w-full px-1 py-2 relative z-20">
-                        <div className="flex gap-2 items-center">
-                          <button
-                            type="button"
-                            aria-label="Remove color stop"
-                            disabled={numPoints <= 1}
-                            onClick={() => setNumPoints(numPoints - 1)}
-                            className="text-muted-foreground size-7 rounded hover:bg-slate-200 transition-colors flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent"
-                          >
-                            <Minus className="size-4" />
-                          </button>
-                          <span className="text-xs text-muted-foreground tabular-nums w-3 text-center">
-                            {numPoints}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label="Add color stop"
-                            disabled={numPoints >= 3}
-                            onClick={() => setNumPoints(numPoints + 1)}
-                            className="text-muted-foreground size-7 rounded hover:bg-slate-200 transition-colors flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent"
-                          >
-                            <Plus className="size-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </>
-                  )}
-                </div>
-                <div className="flex min-w-0 flex-col gap-2">
-                  <IconPreviewUpload state={state} setState={setState} />
-                  <IconColorModeControl state={state} setState={setState} />
-                </div>
-              </div>
-              <div className="col-span-2 flex flex-col gap-2">
-                {numPoints > 1 && (
-                  <div className="grid grid-cols-[146px_minmax(0,1fr)] gap-x-4 items-center">
-                    <GradientModeControl
-                      value={state.gradientMode}
-                      onChange={setGradientMode}
-                    />
-                    {state.gradientMode === "linear" ? (
-                      <GradientAngleControl
-                        value={state.gradientAngle}
-                        onChange={(gradientAngle) =>
-                          setState((s) => ({ ...s, gradientAngle }))
-                        }
-                      />
-                    ) : (
-                      <div className="h-9 text-xs leading-4 text-muted-foreground flex items-center">
-                        Drag mesh anchors to reposition the gradient.
-                      </div>
-                    )}
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    "grid gap-2",
-                    numPoints > 1 && state.gradientMode === "linear"
-                      ? "grid-cols-[146px_36px] items-start"
-                      : "grid-cols-[146px]",
-                  )}
-                >
-                  <div className="flex flex-col gap-2">
-                    {state.bgColors.map((c, i) => (
-                      <ColorField
-                        key={i}
-                        value={c}
-                        disabled={
-                          state.gradientMode === "linear" && i > 0 && locked
-                        }
-                        onChange={(v) =>
-                          setState((s) => {
-                            const next = [...s.bgColors];
-                            next[i] = v.toLowerCase();
-                            return { ...s, bgColors: next };
-                          })
-                        }
-                      />
-                    ))}
-                  </div>
-                  {numPoints > 1 && state.gradientMode === "linear" && (
-                    <button
-                      type="button"
-                      aria-label={
-                        locked ? "Unlock color stops" : "Lock color stops"
-                      }
-                      title={
-                        locked
-                          ? "Unlock to edit color stops independently"
-                          : "Lock color stops to the picker"
-                      }
-                      onClick={() => setLocked((l) => !l)}
-                      className="text-muted-foreground size-9 rounded-md border border-[#d1d1d1] bg-white hover:bg-slate-100 transition-colors flex items-center justify-center"
-                    >
-                      {locked ? (
-                        <Lock className="size-4" />
-                      ) : (
-                        <Unlock className="size-4" />
-                      )}
-                    </button>
-                  )}
-                </div>
-              </div>
-            </section>
-
-            {/* Position */}
-            <section className="flex flex-col gap-3">
-              <label className="text-sm font-medium text-[#314158]">
-                Position
-              </label>
-              <RadioGroupCards
-                items={positionItems}
-                value={state.position}
-                onValueChange={(v) =>
-                  setState((s) => ({ ...s, position: v }))
-                }
-                columns={2}
-              />
-            </section>
-          </div>
-
-          <div className="flex gap-2 items-center justify-end p-4 border-t border-[#e2e8f0]">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                onReset();
-                setLocked(true);
-              }}
+    <section className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
+        {/* Background Color */}
+        {/* Phones stack: background and its colors, then the icon. */}
+        <section className="grid grid-cols-1 gap-x-4 gap-y-2 sm:grid-cols-[280px_minmax(0,1fr)]">
+          <label className="order-1 text-sm font-medium text-[#314158] sm:order-none">
+            Background Color
+          </label>
+          <label className="order-4 mt-4 text-sm font-medium text-[#314158] sm:order-none sm:mt-0">
+            Modify Icon
+          </label>
+          <div className="contents">
+            <div
+              className="relative order-2 rounded-xl bg-slate-100 p-3 flex flex-col items-center justify-center sm:order-none"
             >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              className={cn(
-                "px-4 min-w-[128px]",
-                !isDirty &&
-                  "bg-muted text-muted-foreground hover:bg-muted pointer-events-none",
+              {state.gradientMode === "mesh" ? (
+                <MeshGradientEditor
+                  colors={state.bgColors}
+                  points={state.meshPoints}
+                  onChange={(meshPoints) =>
+                    setState((s) => ({ ...s, meshPoints }))
+                  }
+                />
+              ) : (
+                <>
+                  <ColorPicker
+                    size={240}
+                    bulletRadius={16}
+                    numPoints={numPoints}
+                    locked={locked}
+                    value={state.bgColors[0]}
+                    onColorChange={handlePickerChange}
+                  />
+                  <div className="flex items-center justify-center w-full px-1 py-2 relative z-20">
+                    <div className="flex gap-2 items-center">
+                      <button
+                        type="button"
+                        aria-label="Remove color stop"
+                        disabled={numPoints <= 1}
+                        onClick={() => setNumPoints(numPoints - 1)}
+                        className="text-muted-foreground size-7 rounded hover:bg-slate-200 transition-colors flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <Minus className="size-4" />
+                      </button>
+                      <span className="text-xs text-muted-foreground tabular-nums w-3 text-center">
+                        {numPoints}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Add color stop"
+                        disabled={numPoints >= 3}
+                        onClick={() => setNumPoints(numPoints + 1)}
+                        className="text-muted-foreground size-7 rounded hover:bg-slate-200 transition-colors flex items-center justify-center disabled:opacity-30 disabled:hover:bg-transparent"
+                      >
+                        <Plus className="size-4" />
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
-            >
-              Save Changes
-            </Button>
+            </div>
+            <div className="order-5 flex min-w-0 flex-col gap-2 sm:order-none">
+              <IconPreviewUpload state={state} setState={setState} />
+              <IconColorModeControl state={state} setState={setState} />
+            </div>
           </div>
-        </TabsContent>
-
-        <TabsContent
-          value="integration"
-          className="flex items-center justify-center p-12 text-sm text-muted-foreground"
-        >
-          Coming soon
-        </TabsContent>
-      </Tabs>
-    </aside>
+          <div className="order-3 flex flex-col gap-2 sm:order-none sm:col-span-2">
+            {numPoints > 1 && (
+              <div className="grid grid-cols-[146px_minmax(0,1fr)] gap-x-4 items-center">
+                <GradientModeControl
+                  value={state.gradientMode}
+                  onChange={setGradientMode}
+                />
+                {state.gradientMode === "linear" && (
+                  <GradientAngleControl
+                    value={state.gradientAngle}
+                    onChange={(gradientAngle) =>
+                      setState((s) => ({ ...s, gradientAngle }))
+                    }
+                  />
+                )}
+              </div>
+            )}
+            <div className="grid w-[280px] grid-cols-2 gap-2">
+              {state.bgColors.map((c, i) => (
+                  <ColorField
+                    key={i}
+                    value={c}
+                    disabled={
+                      state.gradientMode === "linear" && i > 0 && locked
+                    }
+                    onChange={(v) =>
+                      setState((s) => {
+                        const next = [...s.bgColors];
+                        next[i] = v.toLowerCase();
+                        return { ...s, bgColors: next };
+                      })
+                    }
+                  />
+                ))}
+              {numPoints > 1 && state.gradientMode === "linear" && (
+                <button
+                  type="button"
+                  aria-label={
+                    locked ? "Unlock color stops" : "Lock color stops"
+                  }
+                  title={
+                    locked
+                      ? "Unlock to edit color stops independently"
+                      : "Lock color stops to the picker"
+                  }
+                  onClick={() => setLocked((l) => !l)}
+                  className="text-muted-foreground size-9 rounded-md border border-[#d1d1d1] bg-white hover:bg-slate-100 transition-colors flex items-center justify-center"
+                >
+                  {locked ? (
+                    <Lock className="size-4" />
+                  ) : (
+                    <Unlock className="size-4" />
+                  )}
+                </button>
+              )}
+            </div>
+          </div>
+        </section>
+      </div>
+    </section>
   );
 }
 
@@ -398,8 +276,7 @@ function IconPreviewUpload({
         }}
       />
       <span className="absolute inset-0 flex items-center justify-center">
-        {state.iconImage ? (
-          <span
+        <span
             className="size-12 bg-current"
             style={{
               color: resolved,
@@ -414,9 +291,6 @@ function IconPreviewUpload({
             }}
             aria-hidden
           />
-        ) : (
-          <Sparkles className="size-10" style={{ color: resolved }} />
-        )}
       </span>
       {state.bgColors.length > 1 && (
         <span className="absolute left-3 top-3 rounded-md bg-white/85 px-2 py-1 text-xs font-medium tabular-nums text-[#262626] shadow-sm">
@@ -640,7 +514,7 @@ function ColorField({
   return (
     <div
       className={cn(
-        "inline-flex h-9 w-[146px] items-center gap-2 rounded-md border border-[#d1d1d1] bg-white px-2 transition-colors focus-within:ring-2 focus-within:ring-ring/50",
+        "inline-flex h-9 w-full items-center gap-2 rounded-md border border-[#d1d1d1] bg-white px-2 transition-colors focus-within:ring-2 focus-within:ring-ring/50",
         disabled && "bg-[#f8fafc] opacity-55",
       )}
       suppressHydrationWarning
